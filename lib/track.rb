@@ -1,15 +1,15 @@
 require "taglib"
 
 class Track
-attr_accessor :filename
+attr_accessor :filepath
 
-  def initialize filename
-    @filename = filename
+  def initialize filepath
+    @filepath = filepath
   end
 
-  def read_tag filename
+  def read_tag filepath
     metadata = Hash.new
-    TagLib::FileRef.open(filename) do |fileref|
+    TagLib::FileRef.open(filepath) do |fileref|
       unless fileref.null?
         tag = fileref.tag
         metadata[:title] = tag.title
@@ -24,8 +24,8 @@ attr_accessor :filename
     metadata
   end
 
-  def write_tag filename, metadata
-    TagLib::FileRef.open(filename) do |fileref|
+  def write_tag filepath, metadata
+    TagLib::FileRef.open(filepath) do |fileref|
       unless fileref.null?
         tag = fileref.tag
         tag.title = metadata[:title]
@@ -40,13 +40,14 @@ attr_accessor :filename
     end
   end
 
-  def rename current_filename, metadata
+  def rename current_filepath, metadata
     track = "%02d" % metadata[:track].to_s
     title = metadata[:title]
-    extension = File.extname(current_filename)
-    new_filename = "#{track} #{title}#{extension}"
-    File.rename(current_filename, new_filename)
-    @filename = new_filename
+    directory = File.dirname(current_filepath)
+    extension = File.extname(current_filepath)
+    new_filepath = "#{directory}/#{track} #{title}#{extension}"
+    File.rename(current_filepath, new_filepath)
+    @filepath = new_filepath
   end
 
 end # Track class
