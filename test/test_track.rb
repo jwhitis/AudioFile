@@ -1,11 +1,10 @@
 require "test/unit"
 require "./lib/track.rb"
 require "taglib"
-require "fileutils"
 
 class TrackUnitTest < Test::Unit::TestCase
 
-  def test_a1_track_stores_filepath
+  def test_a1_stores_filepath
     track = Track.new("test_audio/read_test.mp3")
     assert_equal("test_audio/read_test.mp3", track.filepath)
   end

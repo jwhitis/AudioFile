@@ -7,6 +7,11 @@ class Collection
     @directory = directory
   end
 
+  def entry_list directory
+    entries = Dir.entries(directory)
+    entries.select { |entry| !entry.start_with?(".") }
+  end
+
   def flatten_dir directory
     begin
       flat = true
@@ -22,11 +27,6 @@ class Collection
         end
       end
     end until flat
-  end
-
-  def entry_list directory
-    entries = Dir.entries(directory)
-    entries.select { |entry| !entry.start_with?(".") }
   end
 
 end # Collection class
