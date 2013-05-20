@@ -29,4 +29,9 @@ class Collection
     end until flat
   end
 
+  def create_folders directory, metadata
+    path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
+    FileUtils.mkpath(path) unless Dir.exist?(path)
+  end
+
 end # Collection class

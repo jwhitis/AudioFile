@@ -1,7 +1,7 @@
 require "taglib"
 
 class Track
-attr_accessor :filepath
+  attr_reader :filepath
 
   def initialize filepath
     @filepath = filepath
