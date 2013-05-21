@@ -1,5 +1,4 @@
-require "test/unit"
-require "./lib/collection.rb"
+require "test_helper"
 
 class CollectionUnitTest < Test::Unit::TestCase
 

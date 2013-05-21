@@ -1,5 +1,4 @@
-require "test/unit"
-require "./lib/track.rb"
+require "test_helper"
 require "taglib"
 
 class TrackUnitTest < Test::Unit::TestCase
