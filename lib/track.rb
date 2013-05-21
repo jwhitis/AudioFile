@@ -7,7 +7,7 @@ class Track
     @filepath = filepath
   end
 
-  def read_tag filepath
+  def read_tag
     metadata = Hash.new
     TagLib::FileRef.open(filepath) do |fileref|
       unless fileref.null?
@@ -24,7 +24,7 @@ class Track
     metadata
   end
 
-  def write_tag filepath, metadata
+  def write_tag metadata
     TagLib::FileRef.open(filepath) do |fileref|
       unless fileref.null?
         tag = fileref.tag
@@ -40,13 +40,13 @@ class Track
     end
   end
 
-  def rename current_filepath, metadata
+  def rename metadata
     track = "%02d" % metadata[:track].to_s
     title = metadata[:title]
-    directory = File.dirname(current_filepath)
-    extension = File.extname(current_filepath)
+    directory = File.dirname(filepath)
+    extension = File.extname(filepath)
     new_filepath = "#{directory}/#{track} #{title}#{extension}"
-    File.rename(current_filepath, new_filepath)
+    File.rename(filepath, new_filepath)
     @filepath = new_filepath
   end
 

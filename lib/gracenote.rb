@@ -12,7 +12,7 @@ class Gracenote
                 <CLIENT>#{client_id}</CLIENT>
               </QUERY>
             </QUERIES>"
-    url = URI.parse(url(client_id))
+    url = URI.parse(get_url)
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     http.ssl_version = :SSLv3
@@ -23,11 +23,11 @@ class Gracenote
     end
   end
 
-  def url client_id
+  def get_url
     "https://c#{client_id.split("-").first}.web.cddbp.net/webapi/xml/1.0/"
   end
 
-  def query client_id, user_id, metadata
+  def query metadata
     "<QUERIES>
       <LANG>eng</LANG>
       <AUTH>
@@ -43,9 +43,9 @@ class Gracenote
     </QUERIES>"
   end
 
-  def search url, query
+  def search query
     metadata = Hash.new
-    url = URI.parse(url)
+    url = URI.parse(get_url)
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     http.ssl_version = :SSLv3

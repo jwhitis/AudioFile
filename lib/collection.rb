@@ -7,12 +7,12 @@ class Collection
     @directory = directory
   end
 
-  def entry_list directory
-    entries = Dir.entries(directory)
+  def entry_list path
+    entries = Dir.entries(path)
     entries.select { |entry| !entry.start_with?(".") }
   end
 
-  def flatten_dir directory
+  def flatten
     begin
       flat = true
       entries = entry_list(directory)
@@ -29,9 +29,14 @@ class Collection
     end until flat
   end
 
-  def create_folders directory, metadata
+  def create_path metadata
     path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
     FileUtils.mkpath(path) unless Dir.exist?(path)
+  end
+
+  def move_track current_path, metadata
+    new_path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
+    FileUtils.move(current_path, new_path)
   end
 
 end # Collection class
