@@ -17,11 +17,11 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert(!user_id.empty?)
   end
 
-  def test_b3_get_url_returns_api_url
+  def test_b3_url_returns_api_url
     client_id = "309248-02139F04093408231C76178AE1A01581"
     url = "https://c309248.web.cddbp.net/webapi/xml/1.0/"
     api = Gracenote.new(client_id)
-    assert_equal(url, api.get_url)
+    assert_equal(url, api.url)
   end
 
   def test_b4_query_returns_formatted_xml_query

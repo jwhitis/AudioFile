@@ -12,18 +12,20 @@ class Gracenote
                 <CLIENT>#{client_id}</CLIENT>
               </QUERY>
             </QUERIES>"
-    url = URI.parse(get_url)
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.ssl_version = :SSLv3
-    http.start do |agent|
-      response = agent.post(url.path, query)
-      doc = REXML::Document.new(response.body)
-      @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
-    end
+    response = http.request_post(url, query)
+    doc = REXML::Document.new(response.body)
+    @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
   end
 
-  def get_url
+  def http
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.ssl_version = :SSLv3
+    http
+  end
+
+  def url
     "https://c#{client_id.split("-").first}.web.cddbp.net/webapi/xml/1.0/"
   end
 
@@ -44,21 +46,15 @@ class Gracenote
   end
 
   def search query
+    response = http.request_post(url, query)
+    doc = REXML::Document.new(response.body)
     metadata = Hash.new
-    url = URI.parse(get_url)
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.ssl_version = :SSLv3
-    http.start do |agent|
-      response = agent.post(url.path, query)
-      doc = REXML::Document.new(response.body)
-      metadata[:artist] = doc.elements["RESPONSES/RESPONSE/ALBUM/ARTIST"].text
-      metadata[:album] = doc.elements["RESPONSES/RESPONSE/ALBUM/TITLE"].text
-      metadata[:title] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TITLE"].text
-      metadata[:track] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TRACK_NUM"].text.to_i
-      metadata[:year] = doc.elements["RESPONSES/RESPONSE/ALBUM/DATE"].text.to_i
-      metadata[:genre] = doc.elements["RESPONSES/RESPONSE/ALBUM/GENRE"].text
-    end
+    metadata[:artist] = doc.elements["RESPONSES/RESPONSE/ALBUM/ARTIST"].text
+    metadata[:album] = doc.elements["RESPONSES/RESPONSE/ALBUM/TITLE"].text
+    metadata[:title] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TITLE"].text
+    metadata[:track] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TRACK_NUM"].text.to_i
+    metadata[:year] = doc.elements["RESPONSES/RESPONSE/ALBUM/DATE"].text.to_i
+    metadata[:genre] = doc.elements["RESPONSES/RESPONSE/ALBUM/GENRE"].text
     metadata
   end
 
