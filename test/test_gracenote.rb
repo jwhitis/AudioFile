@@ -1,5 +1,4 @@
-require "test/unit"
-require "./lib/gracenote.rb"
+require "test_helper"
 
 class GracenoteUnitTest < Test::Unit::TestCase
 

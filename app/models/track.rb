@@ -63,4 +63,4 @@ class Track
     @metadata = new_data
   end
 
-end # Track class
+end

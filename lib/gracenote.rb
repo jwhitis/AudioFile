@@ -58,4 +58,4 @@ class Gracenote
     metadata
   end
 
-end # Gracenote class
+end

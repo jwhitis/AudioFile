@@ -1,5 +1,4 @@
 require "test_helper"
-require "./lib/gracenote.rb"
 require "taglib"
 
 class TrackUnitTest < Test::Unit::TestCase

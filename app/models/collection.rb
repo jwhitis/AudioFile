@@ -4,7 +4,12 @@ class Collection
   attr_reader :directory
 
   def initialize directory
-    @directory = directory
+    directory = directory.gsub(/["']/, "")
+    if Dir.exist?(directory)
+      @directory = directory
+    else
+      raise ArgumentError, "'#{directory}' is not a valid directory."
+    end
   end
 
   def entry_list path
@@ -39,4 +44,4 @@ class Collection
     FileUtils.move(current_path, new_path)
   end
 
-end # Collection class
+end
