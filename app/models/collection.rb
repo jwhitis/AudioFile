@@ -50,7 +50,12 @@ class Collection
     entries = entry_list(directory)
     entries.each do |entry|
       track = Track.new("#{directory}/#{entry}")
-      track.update(api)
+      begin
+        track.update(api)
+      rescue ArgumentError => error
+        raise ArgumentError, error.message
+        next
+      end
       new_path = create_path(track.metadata)
       filepath = move_track(track.filepath, new_path)
       track.filepath = filepath

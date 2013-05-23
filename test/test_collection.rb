@@ -63,6 +63,10 @@ class CollectionUnitTest < Test::Unit::TestCase
     collection.organize(api)
     assert(!Dir.exist?("Michael Jackson"))
     collection.flatten
+    `mkdir -p test_dir3/"Michael Jackson"/Thriller`
+    `mkdir test_dir3/"Sunny Day Real Estate"`
+    `mv test_dir3/"03 The Future Freaks Me Out.mp3" test_dir3/"Michael Jackson"/Thriller`
+    `mv test_dir3/"01 Seven.mp3" test_dir3/"Sunny Day Real Estate"`
   end
 
   def test_d9_organize_creates_new_artist_and_album_folders
@@ -73,6 +77,10 @@ class CollectionUnitTest < Test::Unit::TestCase
     assert_equal(["Motion City Soundtrack", "Sunny Day Real Estate", "The English Beat"],
       collection.entry_list("test_dir3"))
     collection.flatten
+    `mkdir -p test_dir3/"Michael Jackson"/Thriller`
+    `mkdir test_dir3/"Sunny Day Real Estate"`
+    `mv test_dir3/"03 The Future Freaks Me Out.mp3" test_dir3/"Michael Jackson"/Thriller`
+    `mv test_dir3/"01 Seven.mp3" test_dir3/"Sunny Day Real Estate"`
   end
 
   def test_d10_organize_renames_tracks_and_moves_them_into_album_folders
@@ -82,6 +90,10 @@ class CollectionUnitTest < Test::Unit::TestCase
     collection.organize(api)
     assert(File.exist?("test_dir3/Sunny Day Real Estate/Diary/01 Seven.mp3"))
     collection.flatten
+    `mkdir -p test_dir3/"Michael Jackson"/Thriller`
+    `mkdir test_dir3/"Sunny Day Real Estate"`
+    `mv test_dir3/"03 The Future Freaks Me Out.mp3" test_dir3/"Michael Jackson"/Thriller`
+    `mv test_dir3/"01 Seven.mp3" test_dir3/"Sunny Day Real Estate"`
   end
 
 end

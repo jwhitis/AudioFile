@@ -81,6 +81,7 @@ class Track
 
   def update api
     read_tag
+    title_from_filepath if metadata[:title].nil?
     get_metadata(api)
     write_tag
     rename
