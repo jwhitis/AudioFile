@@ -4,22 +4,32 @@ class Track
   attr_accessor :filepath
   attr_accessor :metadata
 
+  PROPERTIES = [
+    :title,
+    :artist,
+    :album,
+    :year,
+    :track,
+    :genre,
+    :comment
+  ]
+
   def initialize filepath
     @filepath = filepath
   end
 
   def read_tag
-    metadata = Hash.new
+    metadata = {}
     TagLib::FileRef.open(filepath) do |fileref|
-      unless fileref.null?
+      if fileref.null?
+        raise ArgumentError, "'#{File.basename(filepath)}' cannot be opened."
+      else
         tag = fileref.tag
-        metadata[:title] = tag.title
-        metadata[:artist] = tag.artist
-        metadata[:album] = tag.album
-        metadata[:year] = tag.year
-        metadata[:track] = tag.track
-        metadata[:genre] = tag.genre
-        metadata[:comment] = tag.comment
+        PROPERTIES.each do |property|
+          unless tag.send(property).nil?
+            metadata[property] = tag.send(property)
+          end
+        end
       end
     end
     @metadata = metadata
@@ -45,15 +55,15 @@ class Track
 
   def write_tag
     TagLib::FileRef.open(filepath) do |fileref|
-      unless fileref.null?
+      if fileref.null?
+        raise ArgumentError, "'#{File.basename(filepath)}' cannot be opened."
+      else
         tag = fileref.tag
-        tag.title = metadata[:title] unless metadata[:title].nil?
-        tag.artist = metadata[:artist] unless metadata[:artist].nil?
-        tag.album = metadata[:album] unless metadata[:album].nil?
-        tag.year = metadata[:year].to_i unless metadata[:year].nil?
-        tag.track = metadata[:track].to_i unless metadata[:track].nil?
-        tag.genre = metadata[:genre] unless metadata[:genre].nil?
-        tag.comment = metadata[:comment] unless metadata[:comment].nil?
+        PROPERTIES.each do |property|
+          unless metadata[property].nil?
+            tag.send("#{property}=", metadata[property])
+          end
+        end
         fileref.save
       end
     end

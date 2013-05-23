@@ -56,6 +56,32 @@ class CollectionUnitTest < Test::Unit::TestCase
     `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"07 Capital G.mp3" test_dir2`
   end
 
-  # Add test for organize method.
+  def test_d8_organize_removes_current_file_structure
+    client_id = "309248-02139F04093408231C76178AE1A01581"
+    api = Gracenote.new(client_id)
+    collection = Collection.new("test_dir3")
+    collection.organize(api)
+    assert(!Dir.exist?("Michael Jackson"))
+    collection.flatten
+  end
+
+  def test_d9_organize_creates_new_artist_and_album_folders
+    client_id = "309248-02139F04093408231C76178AE1A01581"
+    api = Gracenote.new(client_id)
+    collection = Collection.new("test_dir3")
+    collection.organize(api)
+    assert_equal(["Motion City Soundtrack", "Sunny Day Real Estate", "The English Beat"],
+      collection.entry_list("test_dir3"))
+    collection.flatten
+  end
+
+  def test_d10_organize_renames_tracks_and_moves_them_into_album_folders
+    client_id = "309248-02139F04093408231C76178AE1A01581"
+    api = Gracenote.new(client_id)
+    collection = Collection.new("test_dir3")
+    collection.organize(api)
+    assert(File.exist?("test_dir3/Sunny Day Real Estate/Diary/01 Seven.mp3"))
+    collection.flatten
+  end
 
 end
