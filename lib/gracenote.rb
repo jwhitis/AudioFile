@@ -5,16 +5,20 @@ class Gracenote
   attr_reader :client_id
   attr_reader :user_id
 
-  def initialize client_id
+  def initialize client_id, user_id = nil
     @client_id = client_id
-    query = "<QUERIES>
-              <QUERY CMD='REGISTER'>
-                <CLIENT>#{client_id}</CLIENT>
-              </QUERY>
-            </QUERIES>"
-    response = http.request_post(url, query)
-    doc = REXML::Document.new(response.body)
-    @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
+    if user_id.nil?
+      query = "<QUERIES>
+                <QUERY CMD='REGISTER'>
+                  <CLIENT>#{client_id}</CLIENT>
+                </QUERY>
+              </QUERIES>"
+      response = http.request_post(url, query)
+      doc = REXML::Document.new(response.body)
+      @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
+    else
+      @user_id = user_id
+    end
   end
 
   def http

@@ -50,10 +50,12 @@ class CollectionUnitTest < Test::Unit::TestCase
 
   def test_d7_move_track_moves_track_into_album_folder
     collection = Collection.new("test_dir2")
-    metadata = {:artist => "Nine Inch Nails", :album => "Year Zero"}
-    collection.move_track("test_dir2/07 Capital G.mp3", metadata)
+    new_path = "test_dir2/Nine Inch Nails/Year Zero"
+    collection.move_track("test_dir2/07 Capital G.mp3", new_path)
     assert(File.exist?("test_dir2/Nine Inch Nails/Year Zero/07 Capital G.mp3"))
     `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"07 Capital G.mp3" test_dir2`
   end
+
+  # Add test for organize method.
 
 end

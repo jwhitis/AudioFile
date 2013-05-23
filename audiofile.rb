@@ -1,4 +1,5 @@
 require "./bootstrap_ar.rb"
+include Formatter
 
 puts "Welcome to AudioFile. Please enter the full path of the directory you wish to organize. Otherwise, type 'exit' to leave the program."
 while true

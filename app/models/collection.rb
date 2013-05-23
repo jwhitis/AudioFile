@@ -37,11 +37,24 @@ class Collection
   def create_path metadata
     path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
     FileUtils.mkpath(path) unless Dir.exist?(path)
+    path
   end
 
-  def move_track current_path, metadata
-    new_path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
+  def move_track current_path, new_path
     FileUtils.move(current_path, new_path)
+    "#{new_path}/#{File.basename(current_path)}"
+  end
+
+  def organize api
+    flatten
+    entries = entry_list(directory)
+    entries.each do |entry|
+      track = Track.new("#{directory}/#{entry}")
+      track.update(api)
+      new_path = create_path(track.metadata)
+      filepath = move_track(track.filepath, new_path)
+      track.filepath = filepath
+    end
   end
 
 end

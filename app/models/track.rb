@@ -1,7 +1,7 @@
 require "taglib"
 
 class Track
-  attr_reader :filepath
+  attr_accessor :filepath
   attr_accessor :metadata
 
   def initialize filepath
@@ -22,20 +22,38 @@ class Track
         metadata[:comment] = tag.comment
       end
     end
-    metadata
+    @metadata = metadata
+  end
+
+  def title_from_filepath
+    title = File.basename(filepath, ".*")
+    title = title.gsub(/[-_]/, " ")
+    title = title.sub(/\A\d+/, "").strip
+    if metadata.nil?
+      @metadata = {:title => title}
+    else
+      @metadata[:title] = title
+    end
+    title
+  end
+
+  def get_metadata api
+    query = api.query(metadata)
+    new_data = api.search(query)
+    @metadata = new_data
   end
 
   def write_tag
     TagLib::FileRef.open(filepath) do |fileref|
       unless fileref.null?
         tag = fileref.tag
-        tag.title = metadata[:title]
-        tag.artist = metadata[:artist]
-        tag.album = metadata[:album]
-        tag.year = metadata[:year].to_i
-        tag.track = metadata[:track].to_i
-        tag.genre = metadata[:genre]
-        tag.comment = metadata[:comment]
+        tag.title = metadata[:title] unless metadata[:title].nil?
+        tag.artist = metadata[:artist] unless metadata[:artist].nil?
+        tag.album = metadata[:album] unless metadata[:album].nil?
+        tag.year = metadata[:year].to_i unless metadata[:year].nil?
+        tag.track = metadata[:track].to_i unless metadata[:track].nil?
+        tag.genre = metadata[:genre] unless metadata[:genre].nil?
+        tag.comment = metadata[:comment] unless metadata[:comment].nil?
         fileref.save
       end
     end
@@ -51,16 +69,11 @@ class Track
     @filepath = new_filepath
   end
 
-  def filename
-    filename = File.basename(filepath, ".*")
-    filename = filename.gsub(/[-_]/, " ")
-    filename = filename.sub(/\A\d+/, "").strip
-  end
-
-  def get_metadata api
-    query = api.query(metadata)
-    new_data = api.search(query)
-    @metadata = new_data
+  def update api
+    read_tag
+    get_metadata(api)
+    write_tag
+    rename
   end
 
 end
