@@ -19,11 +19,7 @@ while true
     continue = gets.downcase.chomp!
     if continue == "y"
       puts "Working..."
-      begin
-        controller.execute
-      rescue ArgumentError => error
-        puts "#{error.message.split.first} was skipped.  Still working..."
-      end
+      controller.execute
       puts "Finished!"
       exit
     elsif continue == "n"

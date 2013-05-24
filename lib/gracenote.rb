@@ -5,6 +5,15 @@ class Gracenote
   attr_reader :client_id
   attr_reader :user_id
 
+  PROPERTIES = {
+    :artist => "ARTIST",
+    :album => "TITLE",
+    :title => "TRACK/TITLE",
+    :track => "TRACK/TRACK_NUM",
+    :year => "DATE",
+    :genre => "GENRE"
+  }
+
   def initialize client_id, user_id = nil
     @client_id = client_id
     if user_id.nil?
@@ -52,13 +61,18 @@ class Gracenote
   def search query
     response = http.request_post(url, query)
     doc = REXML::Document.new(response.body)
-    metadata = Hash.new
-    metadata[:artist] = doc.elements["RESPONSES/RESPONSE/ALBUM/ARTIST"].text
-    metadata[:album] = doc.elements["RESPONSES/RESPONSE/ALBUM/TITLE"].text
-    metadata[:title] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TITLE"].text
-    metadata[:track] = doc.elements["RESPONSES/RESPONSE/ALBUM/TRACK/TRACK_NUM"].text.to_i
-    metadata[:year] = doc.elements["RESPONSES/RESPONSE/ALBUM/DATE"].text.to_i
-    metadata[:genre] = doc.elements["RESPONSES/RESPONSE/ALBUM/GENRE"].text
+    if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
+      raise ArgumentError, "No matches for query:\n#{query}."
+    end
+    metadata = {}
+    PROPERTIES.keys.each do |property|
+      unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
+        metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
+        if property == :track || property == :year
+          metadata[property] = metadata[property].to_i
+        end
+      end
+    end
     metadata
   end
 

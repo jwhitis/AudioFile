@@ -25,13 +25,30 @@ class Collection
         if Dir.exist?("#{directory}/#{entry}")
           nested_entries = entry_list("#{directory}/#{entry}")
           nested_entries.each do |nested_entry|
-            FileUtils.move("#{directory}/#{entry}/#{nested_entry}", directory)
+            if File.exist?("#{directory}/#{nested_entry}")
+              new_filepath = unique_name("#{directory}/#{nested_entry}")
+              FileUtils.move("#{directory}/#{entry}/#{nested_entry}", new_filepath)
+            else
+              FileUtils.move("#{directory}/#{entry}/#{nested_entry}", directory)
+            end
           end
           FileUtils.remove_dir("#{directory}/#{entry}")
           flat = false
         end
       end
     end until flat
+  end
+
+  def unique_name current_filepath
+    title = File.basename(current_filepath, ".*")
+    extension = File.extname(current_filepath)
+    number = 1
+    new_filepath = current_filepath
+    while File.exist?(new_filepath)
+      new_filepath = "#{directory}/#{title}-#{number}#{extension}"
+      number += 1
+    end
+    new_filepath
   end
 
   def create_path metadata
@@ -53,7 +70,7 @@ class Collection
       begin
         track.update(api)
       rescue ArgumentError => error
-        raise ArgumentError, error.message
+        puts "#{error.message} Still working..."
         next
       end
       new_path = create_path(track.metadata)

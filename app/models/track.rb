@@ -49,7 +49,11 @@ class Track
 
   def get_metadata api
     query = api.query(metadata)
-    new_data = api.search(query)
+    begin
+      new_data = api.search(query)
+    rescue ArgumentError => error
+      raise ArgumentError, "#{error.message}"
+    end
     @metadata = new_data
   end
 
@@ -71,7 +75,7 @@ class Track
 
   def rename
     track = "%02d" % metadata[:track].to_s
-    title = metadata[:title]
+    title = metadata[:title].gsub("/", "-")
     directory = File.dirname(filepath)
     extension = File.extname(filepath)
     new_filepath = "#{directory}/#{track} #{title}#{extension}"
@@ -80,11 +84,15 @@ class Track
   end
 
   def update api
-    read_tag
-    title_from_filepath if metadata[:title].nil?
-    get_metadata(api)
-    write_tag
-    rename
+    begin
+      read_tag
+      title_from_filepath if metadata[:title].nil?
+      get_metadata(api)
+      write_tag
+      rename
+    rescue ArgumentError => error
+      raise ArgumentError, "#{error.message}"
+    end
   end
 
 end

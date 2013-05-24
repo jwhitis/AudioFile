@@ -2,13 +2,13 @@ require "test_helper"
 
 class GracenoteUnitTest < Test::Unit::TestCase
 
-  def test_b1_stores_client_id
+  def test_b01_stores_client_id
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     assert_equal(client_id, api.client_id)
   end
 
-  def test_b2_stores_user_id
+  def test_b02_stores_user_id
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     user_id = api.user_id
@@ -16,14 +16,14 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert(!user_id.empty?)
   end
 
-  def test_b3_url_returns_api_url
+  def test_b03_url_returns_api_url
     client_id = "309248-02139F04093408231C76178AE1A01581"
     url = "https://c309248.web.cddbp.net/webapi/xml/1.0/"
     api = Gracenote.new(client_id)
     assert_equal(url, api.url)
   end
 
-  def test_b4_query_returns_formatted_xml_query
+  def test_b04_query_returns_formatted_xml_query
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     query = "<QUERIES>
@@ -46,7 +46,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal(query, api.query(metadata))
   end
 
-  def test_b5_search_returns_a_hash_of_metadata
+  def test_b05_search_returns_a_hash_of_metadata
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -59,7 +59,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert(metadata.is_a?(Hash))
   end
 
-  def test_b6_metadata_hash_contains_song_title
+  def test_b06_metadata_hash_contains_song_title
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -72,7 +72,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Enfilade", metadata[:title])
   end
 
-  def test_b7_metadata_hash_contains_artist_name
+  def test_b07_metadata_hash_contains_artist_name
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -85,7 +85,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Nada Surf", metadata[:artist])
   end
 
-  def test_b8_metadata_hash_contains_album_name
+  def test_b08_metadata_hash_contains_album_name
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -98,7 +98,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Synchronicity", metadata[:album])
   end
 
-  def test_b9_metadata_hash_contains_track_number
+  def test_b09_metadata_hash_contains_track_number
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {

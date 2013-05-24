@@ -3,54 +3,54 @@ require "taglib"
 
 class TrackUnitTest < Test::Unit::TestCase
 
-  def test_a1_stores_filepath
+  def test_a01_stores_filepath
     track = Track.new("test_audio/test.mp3")
     assert_equal("test_audio/test.mp3", track.filepath)
   end
 
-  def test_a2_stores_metadata
+  def test_a02_stores_metadata
     track = Track.new("test_audio/test.mp3")
     track.metadata = {:title => "I Will Possess Your Heart"}
     assert_equal({:title => "I Will Possess Your Heart"}, track.metadata)
   end
 
-  def test_a3_read_tag_returns_a_hash_of_metadata
+  def test_a03_read_tag_returns_a_hash_of_metadata
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert(metadata.is_a?(Hash))
   end
 
-  def test_a4_metadata_hash_contains_song_title
+  def test_a04_metadata_hash_contains_song_title
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal("Hanging On The Telephone", metadata[:title])
   end
 
-  def test_a5_metadata_hash_contains_artist_name
+  def test_a05_metadata_hash_contains_artist_name
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal("The Nerves", metadata[:artist])
   end
 
-  def test_a6_metadata_hash_contains_album_name
+  def test_a06_metadata_hash_contains_album_name
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal("One Way Ticket", metadata[:album])
   end
 
-  def test_a7_metadata_hash_contains_track_number
+  def test_a07_metadata_hash_contains_track_number
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal(3, metadata[:track])
   end
 
-  def test_a8_metadata_hash_contains_release_year
+  def test_a08_metadata_hash_contains_release_year
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal(2008, metadata[:year])
   end
 
-  def test_a9_metadata_hash_contains_musical_genre
+  def test_a09_metadata_hash_contains_musical_genre
     track = Track.new("test_audio/read_test.mp3")
     metadata = track.read_tag
     assert_equal("Powerpop", metadata[:genre])
