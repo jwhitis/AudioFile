@@ -70,7 +70,7 @@ class Collection
       begin
         track.update(api)
       rescue ArgumentError => error
-        puts "#{error.message} Still working..."
+        puts "#{error.message}\nStill working..."
         next
       end
       new_path = create_path(track.metadata)

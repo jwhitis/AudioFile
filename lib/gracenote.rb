@@ -55,19 +55,22 @@ class Gracenote
         <TEXT TYPE='ALBUM_TITLE'>#{metadata[:album]}</TEXT>
         <TEXT TYPE='TRACK_TITLE'>#{metadata[:title]}</TEXT>
       </QUERY>
-    </QUERIES>"
+    </QUERIES>".gsub("&", "and")
   end
 
   def search query
     response = http.request_post(url, query)
     doc = REXML::Document.new(response.body)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
-      raise ArgumentError, "No matches for query:\n#{query}."
+      raise ArgumentError, "No matches for query:\n#{query}"
+    elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
+      raise ArgumentError, "Bad query - #{doc.elements["*/MESSAGE"].text}\n#{query}"
     end
     metadata = {}
     PROPERTIES.keys.each do |property|
       unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
         metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
+        metadata[property] = metadata[property].gsub("/", "-")
         if property == :track || property == :year
           metadata[property] = metadata[property].to_i
         end

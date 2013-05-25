@@ -37,8 +37,7 @@ class Track
 
   def title_from_filepath
     title = File.basename(filepath, ".*")
-    title = title.gsub(/[-_]/, " ")
-    title = title.sub(/\A\d+/, "").strip
+    title = title.scan(/[^_\s]+/).join(" ")
     if metadata.nil?
       @metadata = {:title => title}
     else
@@ -75,7 +74,7 @@ class Track
 
   def rename
     track = "%02d" % metadata[:track].to_s
-    title = metadata[:title].gsub("/", "-")
+    title = metadata[:title]
     directory = File.dirname(filepath)
     extension = File.extname(filepath)
     new_filepath = "#{directory}/#{track} #{title}#{extension}"
