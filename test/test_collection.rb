@@ -62,7 +62,16 @@ class CollectionUnitTest < Test::Unit::TestCase
     `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"07 Capital G.mp3" test_dir2`
   end
 
-  def test_09_organize_removes_current_file_structure
+  def test_09_move_track_creates_unique_filepath_for_duplicate_tracks
+    collection = Collection.new("test_dir2")
+    new_path = "test_dir2/Nine Inch Nails/Year Zero"
+    collection.move_track("test_dir2/05 Working Too Hard.mp3", new_path)
+    entries = collection.entry_list("test_dir2/Nine Inch Nails/Year Zero")
+    assert_equal(["05 Working Too Hard-1.mp3", "05 Working Too Hard.mp3"], entries)
+    `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"05 Working Too Hard-1.mp3" test_dir2/"05 Working Too Hard.mp3"`
+  end
+
+  def test_10_organize_removes_current_file_structure
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     collection = Collection.new("test_dir3")
@@ -75,7 +84,7 @@ class CollectionUnitTest < Test::Unit::TestCase
     `mv test_dir3/"01 Seven.mp3" test_dir3/"Sunny Day Real Estate"`
   end
 
-  def test_10_organize_creates_new_artist_and_album_folders
+  def test_11_organize_creates_new_artist_and_album_folders
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     collection = Collection.new("test_dir3")
@@ -89,7 +98,7 @@ class CollectionUnitTest < Test::Unit::TestCase
     `mv test_dir3/"01 Seven.mp3" test_dir3/"Sunny Day Real Estate"`
   end
 
-  def test_11_organize_renames_tracks_and_moves_them_into_album_folders
+  def test_12_organize_renames_tracks_and_moves_them_into_album_folders
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     collection = Collection.new("test_dir3")

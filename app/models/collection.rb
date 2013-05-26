@@ -21,15 +21,13 @@ class Collection
   def flatten
     begin
       flat = true
-      entries = entry_list(directory)
-      entries.each do |entry|
+      entry_list(directory).each do |entry|
         entry_path = "#{directory}/#{entry}"
         if Dir.exist?(entry_path)
-          nested_entries = entry_list(entry_path)
-          nested_entries.each do |nested_entry|
-            current_filepath = "#{entry_path}/#{nested_entry}"
-            new_filepath = unique_name("#{directory}/#{nested_entry}")
-            FileUtils.move(current_filepath, new_filepath)
+          entry_list(entry_path).each do |nested_entry|
+            current_path = "#{entry_path}/#{nested_entry}"
+            new_path = unique_name("#{directory}/#{nested_entry}")
+            FileUtils.move(current_path, new_path)
           end
           FileUtils.remove_dir(entry_path)
           flat = false
@@ -40,10 +38,11 @@ class Collection
 
   def unique_name filepath
     title = File.basename(filepath, ".*")
+    dirname = File.dirname(filepath)
     extension = File.extname(filepath)
     number = 1
     while File.exist?(filepath)
-      filepath = "#{directory}/#{title}-#{number}#{extension}"
+      filepath = "#{dirname}/#{title}-#{number}#{extension}"
       number += 1
     end
     filepath
@@ -56,8 +55,9 @@ class Collection
   end
 
   def move_track current_path, new_path
+    new_path = unique_name("#{new_path}/#{File.basename(current_path)}")
     FileUtils.move(current_path, new_path)
-    "#{new_path}/#{File.basename(current_path)}"
+    new_path
   end
 
   def organize api
