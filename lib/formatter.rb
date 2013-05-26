@@ -10,7 +10,7 @@ module Formatter
   WHITE   = 37
 
   def colorize color
-    "\e[#{color}m#{self}"
+    "\e[#{color}m#{self}\e[0m"
   end
 
 ########## Fix bug with escaping apostrophes! ##########

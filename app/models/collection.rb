@@ -1,6 +1,7 @@
 require "fileutils"
 
 class Collection
+  include Formatter
   attr_reader :directory
 
   def initialize directory
@@ -22,38 +23,35 @@ class Collection
       flat = true
       entries = entry_list(directory)
       entries.each do |entry|
-        if Dir.exist?("#{directory}/#{entry}")
-          nested_entries = entry_list("#{directory}/#{entry}")
+        entry_path = "#{directory}/#{entry}"
+        if Dir.exist?(entry_path)
+          nested_entries = entry_list(entry_path)
           nested_entries.each do |nested_entry|
-            if File.exist?("#{directory}/#{nested_entry}")
-              new_filepath = unique_name("#{directory}/#{nested_entry}")
-              FileUtils.move("#{directory}/#{entry}/#{nested_entry}", new_filepath)
-            else
-              FileUtils.move("#{directory}/#{entry}/#{nested_entry}", directory)
-            end
+            current_filepath = "#{entry_path}/#{nested_entry}"
+            new_filepath = unique_name("#{directory}/#{nested_entry}")
+            FileUtils.move(current_filepath, new_filepath)
           end
-          FileUtils.remove_dir("#{directory}/#{entry}")
+          FileUtils.remove_dir(entry_path)
           flat = false
         end
       end
     end until flat
   end
 
-  def unique_name current_filepath
-    title = File.basename(current_filepath, ".*")
-    extension = File.extname(current_filepath)
+  def unique_name filepath
+    title = File.basename(filepath, ".*")
+    extension = File.extname(filepath)
     number = 1
-    new_filepath = current_filepath
-    while File.exist?(new_filepath)
-      new_filepath = "#{directory}/#{title}-#{number}#{extension}"
+    while File.exist?(filepath)
+      filepath = "#{directory}/#{title}-#{number}#{extension}"
       number += 1
     end
-    new_filepath
+    filepath
   end
 
   def create_path metadata
     path = "#{directory}/#{metadata[:artist]}/#{metadata[:album]}"
-    FileUtils.mkpath(path) unless Dir.exist?(path)
+    FileUtils.mkpath(path)
     path
   end
 
@@ -70,7 +68,8 @@ class Collection
       begin
         track.update(api)
       rescue ArgumentError => error
-        puts "#{error.message}\nStill working..."
+        puts error.message.colorize(RED)
+        puts "Still working...".colorize(CYAN)
         next
       end
       new_path = create_path(track.metadata)
