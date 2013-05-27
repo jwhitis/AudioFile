@@ -48,11 +48,7 @@ class Track
 
   def get_metadata api
     query = api.query(metadata)
-    begin
-      new_data = api.search(query)
-    rescue ArgumentError => error
-      raise ArgumentError, "#{error.message}"
-    end
+    new_data = api.search(query)
     @metadata = new_data
   end
 
@@ -83,15 +79,11 @@ class Track
   end
 
   def update api
-    begin
-      read_tag
-      title_from_filepath if metadata[:title].nil?
-      get_metadata(api)
-      write_tag
-      rename
-    rescue ArgumentError => error
-      raise ArgumentError, "#{error.message}"
-    end
+    read_tag
+    title_from_filepath if metadata[:title].nil?
+    get_metadata(api)
+    write_tag
+    rename
   end
 
 end
