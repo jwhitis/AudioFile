@@ -43,28 +43,28 @@ class Gracenote
   end
 
   def query metadata
-    "<QUERIES>
-      <LANG>eng</LANG>
-      <AUTH>
-        <CLIENT>#{client_id}</CLIENT>
-        <USER>#{user_id}</USER>
-      </AUTH>
-      <QUERY CMD='ALBUM_SEARCH'>
-        <MODE>SINGLE_BEST</MODE>
-        <TEXT TYPE='ARTIST'>#{metadata[:artist]}</TEXT>
-        <TEXT TYPE='ALBUM_TITLE'>#{metadata[:album]}</TEXT>
-        <TEXT TYPE='TRACK_TITLE'>#{metadata[:title]}</TEXT>
-      </QUERY>
-    </QUERIES>".gsub("&", "and")
+"<QUERIES>
+  <LANG>eng</LANG>
+  <AUTH>
+    <CLIENT>#{client_id}</CLIENT>
+    <USER>#{user_id}</USER>
+  </AUTH>
+  <QUERY CMD='ALBUM_SEARCH'>
+    <MODE>SINGLE_BEST</MODE>
+    <TEXT TYPE='ARTIST'>#{metadata[:artist]}</TEXT>
+    <TEXT TYPE='ALBUM_TITLE'>#{metadata[:album]}</TEXT>
+    <TEXT TYPE='TRACK_TITLE'>#{metadata[:title]}</TEXT>
+  </QUERY>
+</QUERIES>".gsub("&", "and")
   end
 
   def search query
     response = http.request_post(url, query)
     doc = REXML::Document.new(response.body)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
-      raise ArgumentError, "No matches for query:\n#{query}"
+      raise ArgumentError, "No matches for query."
     elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
-      raise ArgumentError, "Bad query - #{doc.elements["*/MESSAGE"].text}\n#{query}"
+      raise ArgumentError, "Invalid query."
     end
     metadata = {}
     PROPERTIES.keys.each do |property|

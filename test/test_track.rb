@@ -117,7 +117,17 @@ class TrackUnitTest < Test::Unit::TestCase
     assert_equal(3, track.metadata[:track])
   end
 
-  def test_18_write_tag_sets_title_property
+  def test_18_get_metadata_raises_error_if_search_raises_error
+    client_id = "309248-02139F04093408231C76178AE1A01581"
+    api = Gracenote.new(client_id)
+    track = Track.new("test_audio/test.mp3")
+    track.metadata = {:title => "a1s2d3f4g5h6j7k8l9"}
+    assert_raise(ArgumentError) do
+      track.get_metadata(api)
+    end
+  end
+
+  def test_19_write_tag_sets_title_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:title => "Paper Dolls"}
     track.write_tag
@@ -126,7 +136,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_19_write_tag_sets_artist_property
+  def test_20_write_tag_sets_artist_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:artist => "The Nerves"}
     track.write_tag
@@ -135,7 +145,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_20_write_tag_sets_album_property
+  def test_21_write_tag_sets_album_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:album => "One Way Ticket"}
     track.write_tag
@@ -144,7 +154,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_21_write_tag_sets_track_property
+  def test_22_write_tag_sets_track_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:track => 2}
     track.write_tag
@@ -153,7 +163,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_22_write_tag_sets_year_property
+  def test_23_write_tag_sets_year_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:year => 2008}
     track.write_tag
@@ -162,7 +172,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_23_write_tag_sets_genre_property
+  def test_24_write_tag_sets_genre_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:genre => "Powerpop"}
     track.write_tag
@@ -171,7 +181,7 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_24_write_tag_sets_comment_property
+  def test_25_write_tag_sets_comment_property
     track = Track.new("test_audio/write_test.mp3")
     track.metadata = {:comment => "Comment goes here"}
     track.write_tag
@@ -180,14 +190,14 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_25_write_tag_raises_error_if_tag_cannot_be_opened
+  def test_26_write_tag_raises_error_if_tag_cannot_be_opened
     track = Track.new("test_dir/file1.txt")
     assert_raise(ArgumentError) do
       track.write_tag
     end
   end
 
-  def test_26_rename_changes_filename
+  def test_27_rename_changes_filename
     track = Track.new("test_audio/rename_test.mp3")
     track.metadata = {:title => "People Of The Sun", :track => 1}
     track.rename
@@ -195,7 +205,7 @@ class TrackUnitTest < Test::Unit::TestCase
     `mv test_audio/"01 People Of The Sun.mp3" test_audio/rename_test.mp3`
   end
 
-  def test_27_rename_changes_filepath_instance_variable
+  def test_28_rename_changes_filepath_instance_variable
     track = Track.new("test_audio/rename_test.mp3")
     track.metadata = {:title => "The Impression That I Get", :track => 4}
     track.rename
@@ -203,7 +213,7 @@ class TrackUnitTest < Test::Unit::TestCase
     `mv test_audio/"04 The Impression That I Get.mp3" test_audio/rename_test.mp3`
   end
 
-  def test_28_update_changes_filename
+  def test_29_update_changes_filename
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
@@ -212,7 +222,7 @@ class TrackUnitTest < Test::Unit::TestCase
     `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
   end
 
-  def test_29_update_changes_filepath_instance_variable
+  def test_30_update_changes_filepath_instance_variable
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
@@ -221,7 +231,7 @@ class TrackUnitTest < Test::Unit::TestCase
     `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
   end
 
-  def test_30_update_sets_metadata_tag_properties
+  def test_31_update_sets_metadata_tag_properties
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
@@ -232,7 +242,7 @@ class TrackUnitTest < Test::Unit::TestCase
     `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
   end
 
-  def test_31_update_changes_metadata_instance_variable
+  def test_32_update_changes_metadata_instance_variable
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")

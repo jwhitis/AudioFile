@@ -26,19 +26,20 @@ class GracenoteUnitTest < Test::Unit::TestCase
   def test_04_query_returns_formatted_xml_query
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
-    query = "<QUERIES>
-      <LANG>eng</LANG>
-      <AUTH>
-        <CLIENT>#{api.client_id}</CLIENT>
-        <USER>#{api.user_id}</USER>
-      </AUTH>
-      <QUERY CMD='ALBUM_SEARCH'>
-        <MODE>SINGLE_BEST</MODE>
-        <TEXT TYPE='ARTIST'>The Deftones</TEXT>
-        <TEXT TYPE='ALBUM_TITLE'>Around the Fur</TEXT>
-        <TEXT TYPE='TRACK_TITLE'>Be Quiet and Drive</TEXT>
-      </QUERY>
-    </QUERIES>"
+    query =
+"<QUERIES>
+  <LANG>eng</LANG>
+  <AUTH>
+    <CLIENT>#{api.client_id}</CLIENT>
+    <USER>#{api.user_id}</USER>
+  </AUTH>
+  <QUERY CMD='ALBUM_SEARCH'>
+    <MODE>SINGLE_BEST</MODE>
+    <TEXT TYPE='ARTIST'>The Deftones</TEXT>
+    <TEXT TYPE='ALBUM_TITLE'>Around the Fur</TEXT>
+    <TEXT TYPE='TRACK_TITLE'>Be Quiet and Drive</TEXT>
+  </QUERY>
+</QUERIES>"
     metadata = {
       :artist => "The Deftones",
       :album => "Around the Fur",

@@ -48,7 +48,11 @@ class Track
 
   def get_metadata api
     query = api.query(metadata)
-    new_data = api.search(query)
+    begin
+      new_data = api.search(query)
+    rescue ArgumentError => error
+      raise ArgumentError, "#{error.message} '#{File.basename(filepath)}' was skipped."
+    end
     @metadata = new_data
   end
 
