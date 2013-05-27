@@ -1,5 +1,5 @@
 require "./bootstrap_ar.rb"
-include Formatter
+include Colorize
 
 puts " Welcome to AudioFile ".center(60, "*").colorize(GREEN)
 puts "Please enter the full path of the directory you wish to organize.\nOtherwise, type 'exit' to leave the program."

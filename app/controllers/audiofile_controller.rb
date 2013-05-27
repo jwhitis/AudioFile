@@ -7,13 +7,21 @@ class AudioFileController
     @collection = Collection.new(directory)
   end
 
-  def execute
-    if User.first.nil?
+  def new_user?
+    User.first.nil?
+  end
+
+  def api
+    if new_user?
       api = Gracenote.new(CLIENT_ID)
       User.create(gracenote_id: api.user_id)
     else
       api = Gracenote.new(CLIENT_ID, User.first.gracenote_id)
     end
+    api
+  end
+
+  def execute
     collection.organize(api)
   end
 

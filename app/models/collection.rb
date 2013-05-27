@@ -1,7 +1,7 @@
 require "fileutils"
 
 class Collection
-  include Formatter
+  include Colorize
   attr_reader :directory
 
   def initialize directory
