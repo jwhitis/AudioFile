@@ -71,10 +71,10 @@ class CollectionUnitTest < Test::Unit::TestCase
   def test_10_move_track_creates_unique_filepath_for_duplicate_tracks
     collection = Collection.new("test_dir2")
     new_path = "test_dir2/Nine Inch Nails/Year Zero"
-    collection.move_track("test_dir2/05 Working Too Hard.mp3", new_path)
+    collection.move_track("test_dir2/05 Vessel.mp3", new_path)
     entries = collection.entry_list("test_dir2/Nine Inch Nails/Year Zero")
-    assert_equal(["05 Working Too Hard-1.mp3", "05 Working Too Hard.mp3"], entries)
-    `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"05 Working Too Hard-1.mp3" test_dir2/"05 Working Too Hard.mp3"`
+    assert_equal(["05 Vessel-1.mp3", "05 Vessel.mp3"], entries)
+    `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"05 Vessel-1.mp3" test_dir2/"05 Vessel.mp3"`
   end
 
   def test_11_organize_removes_current_file_structure
