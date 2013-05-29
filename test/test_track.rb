@@ -218,8 +218,8 @@ class TrackUnitTest < Test::Unit::TestCase
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
     track.update(api)
-    assert(File.exist?("test_audio/04 When you Find Out.mp3"))
-    `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
+    assert(File.exist?("test_audio/05 Working Too Hard.mp3"))
+    `mv test_audio/"05 Working Too Hard.mp3" test_audio/update_test.mp3`
   end
 
   def test_30_update_changes_filepath_instance_variable
@@ -227,8 +227,8 @@ class TrackUnitTest < Test::Unit::TestCase
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
     track.update(api)
-    assert_equal("test_audio/04 When You Find Out.mp3", track.filepath)
-    `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
+    assert_equal("test_audio/05 Working Too Hard.mp3", track.filepath)
+    `mv test_audio/"05 Working Too Hard.mp3" test_audio/update_test.mp3`
   end
 
   def test_31_update_sets_metadata_tag_properties
@@ -236,10 +236,10 @@ class TrackUnitTest < Test::Unit::TestCase
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/update_test.mp3")
     track.update(api)
-    TagLib::FileRef.open("test_audio/04 When You Find Out.mp3") do |fileref|
-      assert_equal(4, fileref.tag.track)
+    TagLib::FileRef.open("test_audio/05 Working Too Hard.mp3") do |fileref|
+      assert_equal(5, fileref.tag.track)
     end
-    `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
+    `mv test_audio/"05 Working Too Hard.mp3" test_audio/update_test.mp3`
   end
 
   def test_32_update_changes_metadata_instance_variable
@@ -248,7 +248,7 @@ class TrackUnitTest < Test::Unit::TestCase
     track = Track.new("test_audio/update_test.mp3")
     track.update(api)
     assert_equal(2008, track.metadata[:year])
-    `mv test_audio/"04 When You Find Out.mp3" test_audio/update_test.mp3`
+    `mv test_audio/"05 Working Too Hard.mp3" test_audio/update_test.mp3`
   end
 
 end

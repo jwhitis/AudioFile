@@ -16,13 +16,14 @@ class CollectionUnitTest < Test::Unit::TestCase
   def test_03_entry_list_returns_a_list_of_directory_entries
     collection = Collection.new("test_dir")
     entries = collection.entry_list("test_dir")
-    assert_equal(["file1.txt", "level_two"], entries)
+    assert(["file1.txt", "level_two"].all? { |file| entries.include?(file) })
   end
 
   def test_04_flatten_moves_all_files_to_root_and_removes_subdirectories
     collection = Collection.new("test_dir")
     collection.flatten
-    assert_equal(["file1.txt", "file2.txt", "file3.txt"], collection.entry_list("test_dir"))
+    entries = collection.entry_list("test_dir")
+    assert(["file1.txt", "file2.txt", "file3.txt"].all? { |file| entries.include?(file) })
     `mkdir -p test_dir/level_two/level_three`
     `mv test_dir/file2.txt test_dir/level_two`
     `mv test_dir/file3.txt test_dir/level_two/level_three`
@@ -56,8 +57,7 @@ class CollectionUnitTest < Test::Unit::TestCase
     collection = Collection.new("test_dir2")
     metadata = {:artist => "Nine Inch Nails", :album => "Year Zero"}
     collection.create_path(metadata)
-    entries = collection.entry_list("test_dir2/Nine Inch Nails")
-    assert_equal(["Year Zero"], entries)
+    assert_equal(["Year Zero"], collection.entry_list("test_dir2/Nine Inch Nails"))
   end
 
   def test_09_move_track_moves_track_into_album_folder
@@ -73,7 +73,7 @@ class CollectionUnitTest < Test::Unit::TestCase
     new_path = "test_dir2/Nine Inch Nails/Year Zero"
     collection.move_track("test_dir2/05 Vessel.mp3", new_path)
     entries = collection.entry_list("test_dir2/Nine Inch Nails/Year Zero")
-    assert_equal(["05 Vessel-1.mp3", "05 Vessel.mp3"], entries)
+    assert(["05 Vessel-1.mp3", "05 Vessel.mp3"].all? { |file| entries.include?(file) })
     `mv test_dir2/"Nine Inch Nails"/"Year Zero"/"05 Vessel-1.mp3" test_dir2/"05 Vessel.mp3"`
   end
 
@@ -95,8 +95,8 @@ class CollectionUnitTest < Test::Unit::TestCase
     api = Gracenote.new(client_id)
     collection = Collection.new("test_dir3")
     collection.organize(api)
-    assert_equal(["Motion City Soundtrack", "Sunny Day Real Estate", "The English Beat"],
-      collection.entry_list("test_dir3"))
+    entries = collection.entry_list("test_dir3")
+    assert(["Motion City Soundtrack", "Sunny Day Real Estate", "The English Beat"].all? { |file| entries.include?(file) })
     collection.flatten
     `mkdir -p test_dir3/"Michael Jackson"/Thriller`
     `mkdir test_dir3/"Sunny Day Real Estate"`
