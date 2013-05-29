@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
-gem "taglib-ruby"
 gem "activerecord"
+gem "rake"
 gem "sqlite3"
+gem "taglib-ruby"
