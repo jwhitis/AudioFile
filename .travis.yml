@@ -4,3 +4,4 @@ rvm:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libtag1-dev
+before_script: rake db:migrate
