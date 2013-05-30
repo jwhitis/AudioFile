@@ -8,6 +8,8 @@ This app is my capstone project for the Ruby portion of the Nashville Software S
 
 ### Project Status
 
+[![Build Status](https://www.travis-ci.org/jwhitis/AudioFile.png?branch=master)](https://www.travis-ci.org/jwhitis/AudioFile)
+
 This project has reached a point of stability and incorporates the minimum required feature set. All existing features are fully supported by tests. Features for future implementation include the following:
 
 * Stores the value of each metadata property for each track in a database
