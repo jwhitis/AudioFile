@@ -68,11 +68,9 @@ class TrackUnitTest < Test::Unit::TestCase
     assert_equal(3, track.metadata[:track])
   end
 
-  def test_12_read_tag_raises_error_if_tag_cannot_be_opened
+  def test_12_read_tag_returns_error_message_if_tag_cannot_be_opened
     track = Track.new("test_dir/file1.txt")
-    assert_raise(ArgumentError) do
-      track.read_tag
-    end
+    assert_equal("'file1.txt' cannot be opened.", track.read_tag)
   end
 
   def test_13_title_from_filepath_removes_directory_and_extension
@@ -117,14 +115,13 @@ class TrackUnitTest < Test::Unit::TestCase
     assert_equal(3, track.metadata[:track])
   end
 
-  def test_18_get_metadata_raises_error_if_search_raises_error
+  def test_18_get_metadata_returns_error_message_returned_by_search
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     track = Track.new("test_audio/test.mp3")
     track.metadata = {:title => "a1s2d3f4g5h6j7k8l9"}
-    assert_raise(ArgumentError) do
-      track.get_metadata(api)
-    end
+    message = "No matches for query. 'test.mp3' was skipped."
+    assert_equal(message, track.get_metadata(api))
   end
 
   def test_19_write_tag_sets_title_property
@@ -190,11 +187,9 @@ class TrackUnitTest < Test::Unit::TestCase
     end
   end
 
-  def test_26_write_tag_raises_error_if_tag_cannot_be_opened
+  def test_26_write_tag_returns_error_message_if_tag_cannot_be_opened
     track = Track.new("test_dir/file1.txt")
-    assert_raise(ArgumentError) do
-      track.write_tag
-    end
+    assert_equal("'file1.txt' cannot be opened.", track.write_tag)
   end
 
   def test_27_rename_changes_filename

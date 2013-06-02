@@ -138,23 +138,19 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("New Romantic", metadata[:genre])
   end
 
-  def test_12_search_raises_error_if_status_code_is_no_match
+  def test_12_search_returns_error_message_if_status_code_is_no_match
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {:title => "a1s2d3f4g5h6j7k8l9"}
     query = api.query(metadata)
-    assert_raise(ArgumentError) do
-      api.search(query)
-    end
+    assert_equal("No matches for query.", api.search(query))
   end
 
-  def test_13_search_raises_error_if_status_code_is_error
+  def test_13_search_returns_error_message_if_status_code_is_error
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     query = "<QUERIES>MISSING DATA<QUERIES>"
-    assert_raise(ArgumentError) do
-      api.search(query)
-    end
+    assert_equal("Invalid query.", api.search(query))
   end
 
 end

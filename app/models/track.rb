@@ -19,20 +19,20 @@ class Track
   end
 
   def read_tag
-    metadata = {}
     TagLib::FileRef.open(filepath) do |fileref|
       if fileref.null?
-        raise ArgumentError, "'#{File.basename(filepath)}' cannot be opened."
+        "'#{File.basename(filepath)}' cannot be opened."
       else
         tag = fileref.tag
+        metadata = {}
         PROPERTIES.each do |property|
           unless tag.send(property).nil?
             metadata[property] = tag.send(property)
           end
         end
+        @metadata = metadata
       end
     end
-    @metadata = metadata
   end
 
   def title_from_filepath
@@ -48,18 +48,18 @@ class Track
 
   def get_metadata api
     query = api.query(metadata)
-    begin
-      new_data = api.search(query)
-    rescue ArgumentError => error
-      raise ArgumentError, "#{error.message} '#{File.basename(filepath)}' was skipped."
+    new_data = api.search(query)
+    if new_data.is_a?(Hash)
+      @metadata = new_data
+    else
+      "#{new_data} '#{File.basename(filepath)}' was skipped."
     end
-    @metadata = new_data
   end
 
   def write_tag
     TagLib::FileRef.open(filepath) do |fileref|
       if fileref.null?
-        raise ArgumentError, "'#{File.basename(filepath)}' cannot be opened."
+        "'#{File.basename(filepath)}' cannot be opened."
       else
         tag = fileref.tag
         PROPERTIES.each do |property|

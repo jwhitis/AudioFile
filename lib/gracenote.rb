@@ -62,21 +62,22 @@ class Gracenote
     response = http.request_post(url, query)
     doc = REXML::Document.new(response.body)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
-      raise ArgumentError, "No matches for query."
+      "No matches for query."
     elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
-      raise ArgumentError, "Invalid query."
-    end
-    metadata = {}
-    PROPERTIES.keys.each do |property|
-      unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
-        metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
-        metadata[property] = metadata[property].gsub("/", "-")
-        if property == :track || property == :year
-          metadata[property] = metadata[property].to_i
+      "Invalid query."
+    else
+      metadata = {}
+      PROPERTIES.keys.each do |property|
+        unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
+          metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
+          metadata[property] = metadata[property].gsub("/", "-")
+          if property == :track || property == :year
+            metadata[property] = metadata[property].to_i
+          end
         end
       end
+      metadata
     end
-    metadata
   end
 
 end
