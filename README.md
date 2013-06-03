@@ -45,6 +45,8 @@ It is possible that if you run `bundle install` at this point, you will receive 
 
 ...replacing PATH with the location of include/taglib/taglib.h on your computer. Once taglib-ruby is installed, you can install the remaining dependencies using `bundle install`.
 
+Finally, set up the database by running `rake db:migrate`.
+
 ### Usage
 
 To run AudioFile:
