@@ -9,6 +9,7 @@ This app is my capstone project for the Ruby portion of the Nashville Software S
 ### Project Status
 
 [![Build Status](https://www.travis-ci.org/jwhitis/AudioFile.png?branch=master)](https://www.travis-ci.org/jwhitis/AudioFile)
+[![Code Climate](https://codeclimate.com/github/jwhitis/AudioFile.png)](https://codeclimate.com/github/jwhitis/AudioFile)
 
 This project has reached a point of stability and incorporates the minimum required feature set. All existing features are fully supported by tests. Features for future implementation include the following:
 
@@ -43,6 +44,8 @@ It is possible that if you run `bundle install` at this point, you will receive 
     CONFIGURE_ARGS="--with-opt-dir=PATH" gem install taglib-ruby
 
 ...replacing PATH with the location of include/taglib/taglib.h on your computer. Once taglib-ruby is installed, you can install the remaining dependencies using `bundle install`.
+
+Finally, set up the database by running `rake db:migrate`.
 
 ### Usage
 
