@@ -65,10 +65,9 @@ class Collection
     entries = entry_list(directory)
     entries.each do |entry|
       track = Track.new("#{directory}/#{entry}")
-      begin
-        track.update(api)
-      rescue ArgumentError => error
-        puts error.message.colorize(RED)
+      message = track.update(api)
+      if message.is_a?(String)
+        puts message.colorize(RED)
         puts "Still working...".colorize(CYAN)
         next
       end

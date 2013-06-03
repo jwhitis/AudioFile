@@ -30,6 +30,7 @@ class Track
             metadata[property] = tag.send(property)
           end
         end
+        title_from_filepath if metadata[:title].nil?
         @metadata = metadata
       end
     end
@@ -49,10 +50,10 @@ class Track
   def get_metadata api
     query = api.query(metadata)
     new_data = api.search(query)
-    if new_data.is_a?(Hash)
-      @metadata = new_data
-    else
+    if new_data.is_a?(String)
       "#{new_data} '#{File.basename(filepath)}' was skipped."
+    else
+      @metadata = new_data
     end
   end
 
@@ -80,14 +81,15 @@ class Track
     new_filepath = "#{directory}/#{track} #{title}#{extension}"
     File.rename(filepath, new_filepath)
     @filepath = new_filepath
+    nil
   end
 
   def update api
-    read_tag
-    title_from_filepath if metadata[:title].nil?
-    get_metadata(api)
-    write_tag
-    rename
+    sequence = [:read_tag, :get_metadata, :write_tag, :rename]
+    sequence.each do |step|
+      message = step == :get_metadata ? send(step, api) : send(step)
+      return message if message.is_a?(String)
+    end
   end
 
 end
