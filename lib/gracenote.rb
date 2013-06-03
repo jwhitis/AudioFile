@@ -16,18 +16,25 @@ class Gracenote
 
   def initialize client_id, user_id = nil
     @client_id = client_id
-    if user_id.nil?
-      query = "<QUERIES>
-                <QUERY CMD='REGISTER'>
-                  <CLIENT>#{client_id}</CLIENT>
-                </QUERY>
-              </QUERIES>"
-      response = http.request_post(url, query)
-      doc = REXML::Document.new(response.body)
-      @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
-    else
-      @user_id = user_id
-    end
+    @user_id = user_id.nil? ? get_user_id : user_id
+  end
+
+  def get_user_id
+    doc = get_xml(registration)
+    doc.elements["RESPONSES/RESPONSE/USER"].text
+  end
+
+  def registration
+"<QUERIES>
+  <QUERY CMD='REGISTER'>
+    <CLIENT>#{client_id}</CLIENT>
+  </QUERY>
+</QUERIES>"
+  end
+
+  def get_xml query
+    response = http.request_post(url, query)
+    REXML::Document.new(response.body)
   end
 
   def http
@@ -59,25 +66,28 @@ class Gracenote
   end
 
   def search query
-    response = http.request_post(url, query)
-    doc = REXML::Document.new(response.body)
+    doc = get_xml(query)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
       "No matches for query."
     elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
       "Invalid query."
     else
-      metadata = {}
-      PROPERTIES.keys.each do |property|
-        unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
-          metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
-          metadata[property] = metadata[property].gsub("/", "-")
-          if property == :track || property == :year
-            metadata[property] = metadata[property].to_i
-          end
+      metadata(doc)
+    end
+  end
+
+  def metadata doc
+    metadata = {}
+    PROPERTIES.keys.each do |property|
+      unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
+        metadata[property] = doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].text
+        metadata[property] = metadata[property].gsub("/", "-")
+        if property == :track || property == :year
+          metadata[property] = metadata[property].to_i
         end
       end
-      metadata
     end
+    metadata
   end
 
 end
