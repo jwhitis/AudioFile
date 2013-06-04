@@ -21,7 +21,7 @@ class Track
   def read_tag
     TagLib::FileRef.open(filepath) do |fileref|
       if fileref.null?
-        "'#{File.basename(filepath)}' cannot be opened."
+        @metadata = {:error => "'#{File.basename(filepath)}' cannot be opened."}
       else
         tag = fileref.tag
         metadata = {}
@@ -30,7 +30,7 @@ class Track
             metadata[property] = tag.send(property)
           end
         end
-        title_from_filepath if metadata[:title].nil?
+        metadata[:title] = title_from_filepath if metadata[:title].nil?
         @metadata = metadata
       end
     end
@@ -38,29 +38,24 @@ class Track
 
   def title_from_filepath
     title = File.basename(filepath, ".*")
-    title = title.scan(/[^_\s]+/).join(" ")
-    if metadata.nil?
-      @metadata = {:title => title}
-    else
-      @metadata[:title] = title
-    end
-    title
+    title.scan(/[^_\s]+/).join(" ")
   end
 
   def get_metadata api
     query = api.query(metadata)
     new_data = api.search(query)
-    if new_data.is_a?(String)
-      "#{new_data} '#{File.basename(filepath)}' was skipped."
-    else
-      @metadata = new_data
-    end
+    new_data[:error] = format_error(new_data[:error]) unless new_data[:error].nil?
+    @metadata = new_data
+  end
+
+  def format_error message
+    "#{message} '#{File.basename(filepath)}' was skipped."
   end
 
   def write_tag
     TagLib::FileRef.open(filepath) do |fileref|
       if fileref.null?
-        "'#{File.basename(filepath)}' cannot be opened."
+        @metadata = {:error => "'#{File.basename(filepath)}' cannot be opened."}
       else
         tag = fileref.tag
         PROPERTIES.each do |property|
@@ -81,14 +76,17 @@ class Track
     new_filepath = "#{directory}/#{track} #{title}#{extension}"
     File.rename(filepath, new_filepath)
     @filepath = new_filepath
-    nil
   end
 
   def update api
     sequence = [:read_tag, :get_metadata, :write_tag, :rename]
     sequence.each do |step|
-      message = step == :get_metadata ? send(step, api) : send(step)
-      return message if message.is_a?(String)
+      if step == :get_metadata
+        send(step, api)
+      else
+        send(step)
+      end
+      return unless metadata[:error].nil?
     end
   end
 

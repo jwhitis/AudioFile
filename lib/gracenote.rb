@@ -68,9 +68,9 @@ class Gracenote
   def search query
     doc = get_xml(query)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
-      "No matches for query."
+      {:error => "No matches for query."}
     elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
-      "Invalid query."
+      {:error => "Invalid query."}
     else
       metadata(doc)
     end

@@ -65,9 +65,9 @@ class Collection
     entries = entry_list(directory)
     entries.each do |entry|
       track = Track.new("#{directory}/#{entry}")
-      message = track.update(api)
-      if message.is_a?(String)
-        puts message.colorize(RED)
+      track.update(api)
+      unless track.metadata[:error].nil?
+        puts track.metadata[:error].colorize(RED)
         puts "Still working...".colorize(CYAN)
         next
       end
