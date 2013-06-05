@@ -63,18 +63,20 @@ class Collection
   def organize api
     flatten
     entries = entry_list(directory)
-    entries.each do |entry|
-      track = Track.new("#{directory}/#{entry}")
-      track.update(api)
-      unless track.metadata[:error].nil?
-        puts track.metadata[:error].colorize(RED)
-        puts "Still working...".colorize(CYAN)
-        next
-      end
-      new_path = create_path(track.metadata)
-      filepath = move_track(track.filepath, new_path)
-      track.filepath = filepath
+    entries.each { |entry| process_entry(entry, api) }
+  end
+
+  def process_entry entry, api
+    track = Track.new("#{directory}/#{entry}")
+    track.update(api)
+    unless track.metadata[:error].nil?
+      puts track.metadata[:error].colorize(RED)
+      puts "Still working...".colorize(CYAN)
+      return
     end
+    new_path = create_path(track.metadata)
+    filepath = move_track(track.filepath, new_path)
+    track.filepath = filepath
   end
 
 end

@@ -204,16 +204,14 @@ class GracenoteUnitTest < Test::Unit::TestCase
     api = Gracenote.new(client_id)
     metadata = {:title => "a1s2d3f4g5h6j7k8l9"}
     query = api.query(metadata)
-    message = {:error => "No matches for query."}
-    assert_equal(message, api.search(query))
+    assert_equal("No matches for query.", api.search(query))
   end
 
   def test_19_search_returns_error_message_if_status_code_is_error
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     query = "<QUERIES>MISSING DATA<QUERIES>"
-    message = {:error => "Invalid query."}
-    assert_equal(message, api.search(query))
+    assert_equal("Invalid query.", api.search(query))
   end
 
 end
