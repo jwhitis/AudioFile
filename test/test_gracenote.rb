@@ -33,13 +33,13 @@ class GracenoteUnitTest < Test::Unit::TestCase
   def test_05_registration_returns_xml_registration_query
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
-    query =
+    expected =
 "<QUERIES>
   <QUERY CMD='REGISTER'>
     <CLIENT>#{client_id}</CLIENT>
   </QUERY>
 </QUERIES>"
-    assert_equal(query, api.registration)
+    assert_equal(expected, api.registration)
   end
 
   def test_06_get_xml_returns_xml_document
@@ -64,15 +64,20 @@ class GracenoteUnitTest < Test::Unit::TestCase
 
   def test_08_url_returns_api_url
     client_id = "309248-02139F04093408231C76178AE1A01581"
-    url = "https://c309248.web.cddbp.net/webapi/xml/1.0/"
     api = Gracenote.new(client_id)
-    assert_equal(url, api.url)
+    expected = "https://c309248.web.cddbp.net/webapi/xml/1.0/"
+    assert_equal(expected, api.url)
   end
 
   def test_09_query_returns_xml_search_query
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
-    query =
+    metadata = {
+      :artist => "The Deftones",
+      :album => "Around the Fur",
+      :title => "Be Quiet and Drive"
+    }
+    expected =
 "<QUERIES>
   <LANG>eng</LANG>
   <AUTH>
@@ -86,42 +91,10 @@ class GracenoteUnitTest < Test::Unit::TestCase
     <TEXT TYPE='TRACK_TITLE'>Be Quiet and Drive</TEXT>
   </QUERY>
 </QUERIES>"
-    metadata = {
-      :artist => "The Deftones",
-      :album => "Around the Fur",
-      :title => "Be Quiet and Drive"
-    }
-    assert_equal(query, api.query(metadata))
+    assert_equal(expected, api.query(metadata))
   end
 
-  def test_10_metadata_returns_a_hash_of_metadata
-    client_id = "309248-02139F04093408231C76178AE1A01581"
-    api = Gracenote.new(client_id)
-    metadata = {
-      :artist => "Meat Puppets",
-      :album => "Too High To Die", 
-      :title => "Backwater"
-    }
-    query = api.query(metadata)
-    doc = api.get_xml(query)
-    metadata = api.metadata(doc)
-    assert_equal("Backwater", metadata[:title])
-  end
-
-  def test_11_search_returns_a_hash_of_metadata
-    client_id = "309248-02139F04093408231C76178AE1A01581"
-    api = Gracenote.new(client_id)
-    metadata = {
-      :artist => "The Deftones",
-      :album => "Around the Fur", 
-      :title => "Be Quiet and Drive"
-    }
-    query = api.query(metadata)
-    metadata = api.search(query)
-    assert(metadata.is_a?(Hash))
-  end
-
-  def test_12_metadata_hash_contains_song_title
+  def test_10_search_returns_hash_with_song_title
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -134,7 +107,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Enfilade", metadata[:title])
   end
 
-  def test_13_metadata_hash_contains_artist_name
+  def test_11_search_returns_hash_with_artist_name
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -147,7 +120,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Nada Surf", metadata[:artist])
   end
 
-  def test_14_metadata_hash_contains_album_name
+  def test_12_search_returns_hash_with_album_name
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -160,7 +133,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("Synchronicity", metadata[:album])
   end
 
-  def test_15_metadata_hash_contains_track_number
+  def test_13_search_returns_hash_with_track_number
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -173,7 +146,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal(3, metadata[:track])
   end
 
-  def test_16_metadata_hash_contains_year
+  def test_14_search_returns_hash_with_year
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -186,7 +159,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal(1996, metadata[:year])
   end
 
-  def test_17_metadata_hash_contains_genre
+  def test_15_search_returns_hash_with_genre
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {
@@ -199,7 +172,7 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("New Romantic", metadata[:genre])
   end
 
-  def test_18_search_returns_error_message_if_status_code_is_no_match
+  def test_16_search_returns_error_message_if_status_code_is_no_match
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     metadata = {:title => "a1s2d3f4g5h6j7k8l9"}
@@ -207,11 +180,25 @@ class GracenoteUnitTest < Test::Unit::TestCase
     assert_equal("No matches for query.", api.search(query))
   end
 
-  def test_19_search_returns_error_message_if_status_code_is_error
+  def test_17_search_returns_error_message_if_status_code_is_error
     client_id = "309248-02139F04093408231C76178AE1A01581"
     api = Gracenote.new(client_id)
     query = "<QUERIES>MISSING DATA<QUERIES>"
     assert_equal("Invalid query.", api.search(query))
+  end
+
+  def test_18_metadata_returns_a_hash_of_metadata
+    client_id = "309248-02139F04093408231C76178AE1A01581"
+    api = Gracenote.new(client_id)
+    metadata = {
+      :artist => "Meat Puppets",
+      :album => "Too High To Die", 
+      :title => "Backwater"
+    }
+    query = api.query(metadata)
+    doc = api.get_xml(query)
+    metadata = api.metadata(doc)
+    assert_equal("Backwater", metadata[:title])
   end
 
 end

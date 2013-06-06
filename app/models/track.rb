@@ -31,13 +31,17 @@ class Track
       if fileref.null?
         @metadata = {:error => "'#{File.basename(filepath)}' cannot be opened."}
       else
-        tag = fileref.tag
-        if action == :read
-          @metadata = get_properties(tag)
-        elsif action == :write
-          set_properties(tag, fileref)
-        end
+        process_tag(fileref, action)
       end
+    end
+  end
+
+  def process_tag fileref, action
+    tag = fileref.tag
+    if action == :read
+      @metadata = get_properties(tag)
+    elsif action == :write
+      set_properties(tag, fileref)
     end
   end
 
@@ -78,23 +82,22 @@ class Track
   end
 
   def rename
+    File.rename(filepath, new_filepath)
+    @filepath = new_filepath
+  end
+
+  def new_filepath
     track = "%02d" % metadata[:track].to_s
     title = metadata[:title]
     directory = File.dirname(filepath)
     extension = File.extname(filepath)
-    new_filepath = "#{directory}/#{track} #{title}#{extension}"
-    File.rename(filepath, new_filepath)
-    @filepath = new_filepath
+    "#{directory}/#{track} #{title}#{extension}"
   end
 
   def update api
     steps = [:read_tag, :title_from_filepath, :get_metadata, :write_tag, :rename]
     steps.each do |step|
-      if step == :get_metadata
-        send(step, api)
-      else
-        send(step)
-      end
+      step == :get_metadata ? send(step, api) : send(step)
       break unless metadata[:error].nil?
     end
   end
