@@ -18,6 +18,14 @@ class Track
     @filepath = filepath
   end
 
+  def update api
+    steps = [:read_tag, :title_from_filepath, :get_metadata, :write_tag, :rename]
+    steps.each do |step|
+      step == :get_metadata ? send(step, api) : send(step)
+      break if metadata.has_key?(:error)
+    end
+  end
+
   def read_tag
     open_tag(:read)
   end
@@ -82,24 +90,16 @@ class Track
   end
 
   def rename
-    File.rename(filepath, new_filepath)
-    @filepath = new_filepath
+    File.rename(filepath, filepath_from_metadata)
+    @filepath = filepath_from_metadata
   end
 
-  def new_filepath
+  def filepath_from_metadata
     track = "%02d" % metadata[:track].to_s
     title = metadata[:title]
     directory = File.dirname(filepath)
     extension = File.extname(filepath)
     "#{directory}/#{track} #{title}#{extension}"
-  end
-
-  def update api
-    steps = [:read_tag, :title_from_filepath, :get_metadata, :write_tag, :rename]
-    steps.each do |step|
-      step == :get_metadata ? send(step, api) : send(step)
-      break unless metadata[:error].nil?
-    end
   end
 
 end
