@@ -13,15 +13,14 @@ class AudioFileController
 
   def api
     if new_user?
-      api = Gracenote.new(CLIENT_ID)
-      User.create(gracenote_id: api.user_id)
+      Gracenote.new(CLIENT_ID)
     else
-      api = Gracenote.new(CLIENT_ID, User.first.gracenote_id)
+      Gracenote.new(CLIENT_ID, User.first.gracenote_id)
     end
-    api
   end
 
   def execute
+    User.create(gracenote_id: api.user_id) if new_user?
     collection.organize(api)
   end
 
