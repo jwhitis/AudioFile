@@ -66,10 +66,13 @@ class Collection
   def process_entry entry, api
     track = Track.new("#{directory}/#{entry}")
     track.update(api)
-    print_error(track) and return if track.metadata.has_key?(:error)
-    new_path = create_filepath(track)
-    move_entry(track.filepath, new_path)
-    track.filepath = new_path
+    if track.metadata.has_key?(:error)
+      print_error(track)
+    else
+      new_path = create_filepath(track)
+      move_entry(track.filepath, new_path)
+      track.filepath = new_path
+    end
   end
 
   def print_error track
