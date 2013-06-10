@@ -5,11 +5,10 @@ class AudioFileControllerUnitTest < Test::Unit::TestCase
   def test_01_stores_collection
     controller = AudioFileController.new("test_dir3")
     collection = controller.collection
-    assert_equal("test_dir3", collection.directory)
+    assert(collection.is_a?(Collection))
   end
 
   def test_02_new_user_returns_boolean_value
-    User.destroy_all
     controller = AudioFileController.new("test_dir3")
     assert_equal(true, controller.new_user?)
     User.create
@@ -17,25 +16,22 @@ class AudioFileControllerUnitTest < Test::Unit::TestCase
   end
 
   def test_03_api_requests_new_gracenote_id_if_no_users_exist
-    User.destroy_all
     controller = AudioFileController.new("test_dir3")
     user_id = controller.api.user_id
     assert(user_id.is_a?(String) && !user_id.empty?)
   end
 
   def test_04_api_uses_gracenote_id_of_existing_user
-    User.destroy_all
     User.create(gracenote_id: "XXXX-XXXX")
     controller = AudioFileController.new("test_dir3")
     assert_equal("XXXX-XXXX", controller.api.user_id)
   end
 
   def test_05_execute_creates_new_user_if_none_exist
-    User.destroy_all
-    assert_equal(User.count, 0)
+    assert_equal(0, User.count)
     controller = AudioFileController.new("test_dir3")
     controller.execute
-    assert_equal(User.count, 1)
+    assert_equal(1, User.count)
   end
 
   def test_06_execute_organizes_collection_by_artist_and_album
