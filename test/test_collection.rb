@@ -113,6 +113,7 @@ class CollectionUnitTest < Test::Unit::TestCase
     collection.process_entry("13 Too Nice To Talk To.mp3", api)
     assert(File.exist?("test_dir3/The English Beat/Beat This! - The Best Of The Beat/13 Too Nice To Talk To.mp3"))
     `mv test_dir3/"The English Beat"/"Beat This! - The Best Of The Beat"/"13 Too Nice To Talk To.mp3" test_dir3`
+    `rm -r test_dir3/"The English Beat"`
   end
 
   def test_13_unique_name_returns_unique_filepath
