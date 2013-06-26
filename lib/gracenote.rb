@@ -16,18 +16,25 @@ class Gracenote
 
   def initialize client_id, user_id = nil
     @client_id = client_id
-    if user_id.nil?
-      query = "<QUERIES>
-                <QUERY CMD='REGISTER'>
-                  <CLIENT>#{client_id}</CLIENT>
-                </QUERY>
-              </QUERIES>"
-      response = http.request_post(url, query)
-      doc = REXML::Document.new(response.body)
-      @user_id = doc.elements["RESPONSES/RESPONSE/USER"].text
-    else
-      @user_id = user_id
-    end
+    @user_id = user_id.nil? ? get_user_id : user_id
+  end
+
+  def get_user_id
+    doc = get_xml(registration)
+    doc.elements["RESPONSES/RESPONSE/USER"].text
+  end
+
+  def registration
+"<QUERIES>
+  <QUERY CMD='REGISTER'>
+    <CLIENT>#{client_id}</CLIENT>
+  </QUERY>
+</QUERIES>"
+  end
+
+  def get_xml query
+    response = http.request_post(url, query)
+    REXML::Document.new(response.body)
   end
 
   def http
@@ -59,13 +66,17 @@ class Gracenote
   end
 
   def search query
-    response = http.request_post(url, query)
-    doc = REXML::Document.new(response.body)
+    doc = get_xml(query)
     if doc.elements["*/RESPONSE"].attributes["STATUS"] == "NO_MATCH"
-      raise ArgumentError, "No matches for query."
+      "No matches for query."
     elsif doc.elements["*/RESPONSE"].attributes["STATUS"] == "ERROR"
-      raise ArgumentError, "Invalid query."
+      "Invalid query."
+    else
+      metadata(doc)
     end
+  end
+
+  def metadata doc
     metadata = {}
     PROPERTIES.keys.each do |property|
       unless doc.elements["*/*/ALBUM/#{PROPERTIES[property]}"].nil?
